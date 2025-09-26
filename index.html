@@ -1,31 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Converter Tool</title>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stylish Image Converter</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Image Converter</h1>
-        <input type="file" id="inputFile" accept="image/*">
-        
-        <select id="format">
-            <option value="png">PNG</option>
-            <option value="jpeg">JPEG</option>
-            <option value="webp">WEBP</option>
-        </select>
-        
-        <button id="convertBtn">Convert</button>
-        
-        <a id="downloadLink" style="display:none;">Download</a>
-        
-        <div id="preview">
-            <img id="previewImg" src="" alt="Preview">
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+<div class="container">
+<h1>Stylish Image Converter</h1>
+<input type="file" id="inputFile" accept="image/*">
+<select id="format">
+  <option value="png">PNG</option>
+  <option value="jpeg">JPEG</option>
+  <option value="webp">WEBP</option>
+</select>
+<div class="size-control">
+  <input type="number" id="width" placeholder="Width (px)">
+  <input type="number" id="height" placeholder="Height (px)">
+</div>
+<input type="text" id="filename" placeholder="File Name">
+<button id="convertBtn">Convert & Preview</button>
+<a id="downloadLink" style="display:none;">Download Image</a>
+<div id="preview">
+  <img id="previewImg" src="" alt="Preview">
+</div>
+<a id="websiteBtn" href="https://yourwebsite.com" target="_blank">Go to Website</a>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
