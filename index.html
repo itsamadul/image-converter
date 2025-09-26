@@ -1,32 +1,977 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stylish Image Converter</title>
-<link rel="stylesheet" href="style.css">
-</head>
-<body>
-<div class="container">
-<h1>Stylish Image Converter</h1>
-<input type="file" id="inputFile" accept="image/*">
-<select id="format">
-  <option value="png">PNG</option>
-  <option value="jpeg">JPEG</option>
-  <option value="webp">WEBP</option>
-</select>
-<div class="size-control">
-  <input type="number" id="width" placeholder="Width (px)">
-  <input type="number" id="height" placeholder="Height (px)">
+<div class="min-h-screen bg-white p-1 sm:p-4 lg:p-6">
+<!-- Popup Message Container -->
+<div id="popupContainer" class="fixed top-2 right-2 z-50 space-y-2 max-w-xs sm:max-w-sm sm:top-4 sm:right-4 sm:space-y-3"></div>
+
+<div class="max-w-7xl mx-auto bg-white/95 backdrop-blur-sm rounded-xl sm:rounded-3xl shadow-2xl overflow-hidden">
+    <!-- Header -->
+    <div class="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white text-center py-4 sm:py-8 lg:py-12 px-2 sm:px-6 lg:px-8">
+        <h1 class="text-2xl sm:text-3xl lg:text-5xl font-bold mb-2 sm:mb-4 drop-shadow-lg">
+            <i class="fas fa-image mr-2 text-yellow-300"></i>Image Converter Tool
+        </h1>
+        <p class="text-sm sm:text-base lg:text-xl text-purple-100 mb-2">Convert and resize your images with custom settings</p>
+        <div class="text-xs sm:text-sm text-purple-200">Powered by <span class="font-bold text-yellow-300 bg-white/20 px-2 py-1 rounded-full">EmadulAI.in</span></div>
+    </div>
+
+    <!-- How to Use Guide -->
+    <div class="p-2 sm:p-6 lg:p-8 border-b border-gray-200">
+        <div class="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-lg border-2 border-indigo-200">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg sm:text-xl font-bold text-indigo-800 flex items-center">
+                    <i class="fas fa-question-circle mr-2 text-indigo-600"></i>How to Use This Tool
+                </h2>
+                <button id="toggleGuide" class="bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white px-3 py-1 rounded-lg text-sm font-medium transition-all">
+                    <i class="fas fa-chevron-down mr-1"></i>Show Guide
+                </button>
+            </div>
+            
+            <div id="guideContent" class="hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <!-- Step 1 -->
+                    <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-green-200">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm mr-3">1</div>
+                            <h3 class="font-bold text-green-800 text-sm">Upload Image</h3>
+                        </div>
+                        <p class="text-xs text-gray-700 mb-2">Choose your method:</p>
+                        <ul class="text-xs text-gray-600 space-y-1">
+                            <li>• Drag & drop image file</li>
+                            <li>• Click to browse files</li>
+                            <li>• Load from URL</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-blue-200">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm mr-3">2</div>
+                            <h3 class="font-bold text-blue-800 text-sm">Choose Format</h3>
+                        </div>
+                        <p class="text-xs text-gray-700 mb-2">Select output format:</p>
+                        <ul class="text-xs text-gray-600 space-y-1">
+                            <li>• JPEG (smaller size)</li>
+                            <li>• PNG (transparency)</li>
+                            <li>• WebP (modern format)</li>
+                            <li>• BMP (uncompressed)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-orange-200">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm mr-3">3</div>
+                            <h3 class="font-bold text-orange-800 text-sm">Adjust Settings</h3>
+                        </div>
+                        <p class="text-xs text-gray-700 mb-2">Customize options:</p>
+                        <ul class="text-xs text-gray-600 space-y-1">
+                            <li>• Set target file size</li>
+                            <li>• Choose dimensions</li>
+                            <li>• Adjust quality level</li>
+                        </ul>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="bg-white/80 backdrop-blur-sm rounded-xl p-4 shadow-md border border-purple-200">
+                        <div class="flex items-center mb-3">
+                            <div class="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold text-sm mr-3">4</div>
+                            <h3 class="font-bold text-purple-800 text-sm">Convert & Download</h3>
+                        </div>
+                        <p class="text-xs text-gray-700 mb-2">Get your result:</p>
+                        <ul class="text-xs text-gray-600 space-y-1">
+                            <li>• Click Convert Image</li>
+                            <li>• Preview the result</li>
+                            <li>• Download converted file</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Quick Tips -->
+                <div class="bg-gradient-to-r from-yellow-100 to-orange-100 rounded-xl p-4 border-2 border-yellow-300">
+                    <h3 class="font-bold text-yellow-800 mb-3 flex items-center">
+                        <i class="fas fa-lightbulb mr-2 text-yellow-600"></i>Quick Tips
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-yellow-800">
+                        <div>
+                            <h4 class="font-semibold mb-2">📱 Social Media Sizes:</h4>
+                            <ul class="space-y-1">
+                                <li>• Instagram Square: 1080×1080</li>
+                                <li>• Facebook Cover: 1200×630</li>
+                                <li>• YouTube Thumbnail: 1920×1080</li>
+                                <li>• Profile Picture: 400×400</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold mb-2">💡 Best Practices:</h4>
+                            <ul class="space-y-1">
+                                <li>• Use JPEG for photos</li>
+                                <li>• Use PNG for graphics with transparency</li>
+                                <li>• WebP offers best compression</li>
+                                <li>• Higher quality = larger file size</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Selection Tabs -->
+    <div class="p-2 sm:p-6 lg:p-8">
+    <div class="flex flex-col sm:flex-row mb-4 sm:mb-6 bg-gradient-to-r from-orange-400 to-pink-400 rounded-xl sm:rounded-2xl p-1 sm:p-2 shadow-lg">
+        <button id="fileTab" class="tab-btn flex-1 py-2 sm:py-4 px-3 sm:px-6 rounded-lg sm:rounded-xl font-bold text-sm sm:text-base transition-all bg-white text-orange-600 shadow-md mb-1 sm:mb-0 sm:mr-2">
+            <i class="fas fa-folder-open mr-1 sm:mr-2 text-orange-500"></i>File Upload
+        </button>
+        <button id="urlTab" class="tab-btn flex-1 py-2 sm:py-4 px-3 sm:px-6 rounded-lg sm:rounded-xl font-bold text-sm sm:text-base transition-all text-white hover:bg-white/20">
+            <i class="fas fa-link mr-1 sm:mr-2 text-yellow-300"></i>From URL
+        </button>
+    </div>
+
+    <!-- File Upload Section -->
+    <div id="fileSection" class="upload-section mb-4 sm:mb-6">
+        <div id="uploadArea" class="border-4 border-dashed border-gradient-to-r from-green-400 to-blue-500 bg-gradient-to-br from-green-50 to-blue-50 rounded-xl sm:rounded-2xl p-3 sm:p-6 lg:p-8 text-center transition-all duration-300 hover:from-green-100 hover:to-blue-100 hover:border-green-500 cursor-pointer shadow-lg">
+            <div id="uploadContent">
+                <i class="fas fa-cloud-upload-alt text-4xl sm:text-5xl lg:text-6xl bg-gradient-to-r from-green-500 to-blue-500 bg-clip-text text-transparent mb-4"></i>
+                <h3 class="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 mb-4">Drop your image here or click to browse</h3>
+                <button class="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white px-4 sm:px-6 lg:px-8 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base transition-all transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-file-image mr-2 text-yellow-200"></i>Choose Image
+                </button>
+                <p class="text-xs sm:text-sm text-gray-600 mt-3 bg-white/70 px-3 py-1 rounded-full inline-block">Supports: JPG, PNG, WebP, BMP, GIF</p>
+            </div>
+            
+            <!-- Image Preview (will replace upload content) -->
+            <div id="imagePreview" class="hidden">
+                <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-2xl p-4 sm:p-6 relative shadow-inner">
+                    <button id="deleteImageBtn" class="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all transform hover:scale-110 z-10 shadow-lg">
+                        <i class="fas fa-times text-sm sm:text-base"></i>
+                    </button>
+                    <img id="previewImage" class="max-w-full max-h-60 sm:max-h-80 mx-auto rounded-xl shadow-2xl object-contain border-4 border-white">
+                    <div id="imageInfo" class="text-xs sm:text-sm text-gray-700 mt-4 text-center bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-xl shadow-md"></div>
+                </div>
+            </div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" class="hidden">
+    </div>
+
+    <!-- URL Input Section -->
+    <div id="urlSection" class="upload-section mb-4 sm:mb-6 hidden">
+        <div class="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-lg">
+            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <input type="url" id="urlInput" placeholder="https://example.com/image.jpg" 
+                       class="flex-1 px-4 py-3 sm:py-4 border-2 border-cyan-300 rounded-xl focus:ring-4 focus:ring-cyan-200 focus:border-cyan-500 bg-white/80 backdrop-blur-sm text-sm sm:text-base font-medium">
+                <button id="loadUrlBtn" class="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl font-bold text-sm sm:text-base transition-all transform hover:scale-105 shadow-lg whitespace-nowrap">
+                    <i class="fas fa-download mr-2 text-yellow-200"></i>Load Image
+                </button>
+            </div>
+            
+            <!-- URL Image Preview -->
+            <div id="urlImagePreview" class="hidden mt-6">
+                <div class="bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl p-4 sm:p-6 border-2 border-indigo-200 relative shadow-lg">
+                    <button id="deleteUrlImageBtn" class="absolute top-2 right-2 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-full w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center transition-all transform hover:scale-110 z-10 shadow-lg">
+                        <i class="fas fa-times text-sm sm:text-base"></i>
+                    </button>
+                    <img id="urlPreviewImage" class="max-w-full max-h-60 sm:max-h-80 mx-auto rounded-xl shadow-2xl object-contain border-4 border-white">
+                    <div id="urlImageInfo" class="text-xs sm:text-sm text-gray-700 mt-4 text-center bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-xl shadow-md"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel (shown after image is loaded) -->
+    <div id="settingsPanel" class="hidden mb-4 sm:mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-lg border-2 border-yellow-200">
+            <!-- Format Selection -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-md border border-orange-200">
+                <label class="block text-sm sm:text-base font-bold text-orange-800 mb-2 sm:mb-3">
+                    <i class="fas fa-file-export mr-1 text-orange-600"></i>Convert To:
+                </label>
+                <select id="formatSelect" class="w-full px-3 py-2 sm:py-3 border-2 border-orange-300 rounded-lg focus:ring-4 focus:ring-orange-200 focus:border-orange-500 bg-white text-sm sm:text-base font-medium">
+                    <option value="">Select Format</option>
+                    <option value="jpeg">JPEG</option>
+                    <option value="png">PNG</option>
+                    <option value="webp">WebP</option>
+                    <option value="bmp">BMP</option>
+                </select>
+            </div>
+
+            <!-- File Size -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-md border border-red-200">
+                <label class="block text-sm sm:text-base font-bold text-red-800 mb-2 sm:mb-3">
+                    <i class="fas fa-weight-hanging mr-1 text-red-600"></i>Target Size:
+                </label>
+                <select id="targetSize" class="w-full px-3 py-2 sm:py-3 border-2 border-red-300 rounded-lg focus:ring-4 focus:ring-red-200 focus:border-red-500 bg-white text-sm sm:text-base font-medium mb-2">
+                    <option value="">No Size Limit</option>
+                    <option value="5120">5 KB</option>
+                    <option value="10240">10 KB</option>
+                    <option value="25600">25 KB</option>
+                    <option value="51200">50 KB</option>
+                    <option value="102400">100 KB</option>
+                    <option value="256000">250 KB</option>
+                    <option value="512000">500 KB</option>
+                    <option value="1048576">1 MB</option>
+                    <option value="2097152">2 MB</option>
+                    <option value="5242880">5 MB</option>
+                    <option value="10485760">10 MB</option>
+                    <option value="52428800">50 MB</option>
+                    <option value="104857600">100 MB</option>
+                    <option value="524288000">500 MB</option>
+                    <option value="1073741824">1 GB</option>
+                    <option value="custom">Custom Size</option>
+                </select>
+                <div id="customSizeInput" class="hidden">
+                    <input type="number" id="customSizeValue" placeholder="Enter size in KB" 
+                           class="w-full px-3 py-2 border-2 border-red-300 rounded-lg focus:ring-4 focus:ring-red-200 focus:border-red-500 bg-white text-sm font-medium">
+                </div>
+            </div>
+
+            <!-- Social Media Dimensions -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-md border border-green-200">
+                <label class="block text-sm sm:text-base font-bold text-green-800 mb-2 sm:mb-3">
+                    <i class="fas fa-expand-arrows-alt mr-1 text-green-600"></i>Dimensions:
+                </label>
+                <select id="dimensionSelect" class="w-full px-3 py-2 sm:py-3 border-2 border-green-300 rounded-lg focus:ring-4 focus:ring-green-200 focus:border-green-500 bg-white text-sm sm:text-base font-medium mb-2">
+                    <option value="">Keep Original</option>
+                    <option value="1080x1080">Instagram Square (1080x1080)</option>
+                    <option value="1080x1350">Instagram Portrait (1080x1350)</option>
+                    <option value="1200x630">Facebook Cover (1200x630)</option>
+                    <option value="1920x1080">YouTube Thumbnail (1920x1080)</option>
+                    <option value="1024x512">Twitter Header (1024x512)</option>
+                    <option value="400x400">Profile Picture (400x400)</option>
+                    <option value="1200x1200">Facebook Post (1200x1200)</option>
+                    <option value="735x1102">Pinterest Pin (735x1102)</option>
+                    <option value="1080x1920">Instagram Story (1080x1920)</option>
+                    <option value="820x312">LinkedIn Cover (820x312)</option>
+                    <option value="custom">Custom Dimensions</option>
+                </select>
+                <div id="customDimensionInput" class="hidden grid grid-cols-2 gap-2">
+                    <input type="number" id="customWidth" placeholder="Width (px)" 
+                           class="px-3 py-2 border-2 border-green-300 rounded-lg focus:ring-4 focus:ring-green-200 focus:border-green-500 bg-white text-sm font-medium">
+                    <input type="number" id="customHeight" placeholder="Height (px)" 
+                           class="px-3 py-2 border-2 border-green-300 rounded-lg focus:ring-4 focus:ring-green-200 focus:border-green-500 bg-white text-sm font-medium">
+                </div>
+            </div>
+
+            <!-- Quality -->
+            <div class="bg-white/70 backdrop-blur-sm rounded-xl p-3 sm:p-4 shadow-md border border-purple-200">
+                <label class="block text-sm sm:text-base font-bold text-purple-800 mb-2 sm:mb-3">
+                    <i class="fas fa-sliders-h mr-1 text-purple-600"></i>Quality:
+                </label>
+                <select id="qualitySelect" class="w-full px-3 py-2 sm:py-3 border-2 border-purple-300 rounded-lg focus:ring-4 focus:ring-purple-200 focus:border-purple-500 bg-white text-sm sm:text-base font-medium">
+                    <option value="100">Best (100%)</option>
+                    <option value="95">Excellent (95%)</option>
+                    <option value="90" selected>High (90%)</option>
+                    <option value="80">Good (80%)</option>
+                    <option value="70">Medium (70%)</option>
+                    <option value="60">Low (60%)</option>
+                    <option value="50">Very Low (50%)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Convert Button -->
+        <div class="text-center mt-4 sm:mt-8">
+            <button id="convertBtn" class="bg-gradient-to-r from-emerald-500 via-green-500 to-teal-500 hover:from-emerald-600 hover:via-green-600 hover:to-teal-600 text-white px-4 sm:px-8 lg:px-12 py-3 sm:py-4 lg:py-5 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg lg:text-xl transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl border-2 border-white">
+                <i class="fas fa-magic mr-2 text-yellow-200"></i>Convert Image
+            </button>
+        </div>
+    </div>
+
+    <!-- Result Section -->
+    <div id="resultSection" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6">
+            <!-- Original Image -->
+            <div class="bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl p-4 sm:p-6 shadow-lg border-2 border-blue-200">
+                <h3 class="font-bold text-blue-800 mb-4 text-center text-base sm:text-lg">
+                    <i class="fas fa-image mr-2 text-blue-600"></i>Original Image
+                </h3>
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl p-3 sm:p-4 border-2 border-blue-300 text-center shadow-md">
+                    <img id="originalResult" class="max-w-full max-h-48 sm:max-h-60 mx-auto rounded-lg object-contain border-2 border-white shadow-lg">
+                    <div id="originalInfo" class="text-xs sm:text-sm text-blue-700 mt-3 font-medium"></div>
+                </div>
+            </div>
+
+            <!-- Converted Image -->
+            <div class="bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl p-4 sm:p-6 shadow-lg border-2 border-emerald-200">
+                <h3 class="font-bold text-emerald-800 mb-4 text-center text-base sm:text-lg">
+                    <i class="fas fa-star mr-2 text-emerald-600"></i>Converted Image
+                </h3>
+                <div class="bg-white/80 backdrop-blur-sm rounded-xl p-3 sm:p-4 border-2 border-emerald-300 text-center shadow-md">
+                    <canvas id="convertedCanvas" class="max-w-full max-h-48 sm:max-h-60 mx-auto rounded-lg border-2 border-white shadow-lg"></canvas>
+                    <div id="convertedInfo" class="text-xs sm:text-sm text-emerald-700 mt-3 font-medium"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Download Section -->
+        <div class="bg-blue-50 rounded-xl p-6 text-center">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                    <i class="fas fa-file-signature mr-1"></i>File Name:
+                </label>
+                <input type="text" id="fileName" value="converted_image" 
+                       class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-center">
+            </div>
+            <div class="flex justify-center gap-4">
+                <button id="downloadBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    <i class="fas fa-download mr-2"></i>Download Image
+                </button>
+                <button id="resetBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+                    <i class="fas fa-redo mr-2"></i>Start Over
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
-<input type="text" id="filename" placeholder="File Name">
-<button id="convertBtn">Convert & Preview</button>
-<a id="downloadLink" style="display:none;">Download Image</a>
-<div id="preview">
-  <img id="previewImg" src="" alt="Preview">
-</div>
-<a id="websiteBtn" href="https://yourwebsite.com" target="_blank">Go to Website</a>
-</div>
-<script src="script.js"></script>
-</body>
-</html>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+.drag-over {
+    border-color: #3b82f6 !important;
+    background-color: #eff6ff !important;
+}
+
+.popup-enter {
+    animation: popupEnter 0.3s ease-out;
+}
+
+.popup-exit {
+    animation: popupExit 0.3s ease-in forwards;
+}
+
+@keyframes popupEnter {
+    from {
+        transform: translateX(100%) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes popupExit {
+    from {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%) scale(0.8);
+        opacity: 0;
+    }
+}
+</style>
+
+<script>
+let currentImage = null;
+let convertedDataURL = null;
+
+// Popup Message System
+function showPopup(message, type = 'info', duration = 4000) {
+    const popupContainer = document.getElementById('popupContainer');
+    const popup = document.createElement('div');
+    
+    // Set popup styles based on type
+    let bgClass, iconClass, icon;
+    switch(type) {
+        case 'success':
+            bgClass = 'bg-gradient-to-r from-green-500 to-emerald-500';
+            iconClass = 'text-green-100';
+            icon = 'fas fa-check-circle';
+            break;
+        case 'error':
+            bgClass = 'bg-gradient-to-r from-red-500 to-pink-500';
+            iconClass = 'text-red-100';
+            icon = 'fas fa-exclamation-circle';
+            break;
+        case 'warning':
+            bgClass = 'bg-gradient-to-r from-yellow-500 to-orange-500';
+            iconClass = 'text-yellow-100';
+            icon = 'fas fa-exclamation-triangle';
+            break;
+        case 'loading':
+            bgClass = 'bg-gradient-to-r from-blue-500 to-indigo-500';
+            iconClass = 'text-blue-100';
+            icon = 'fas fa-spinner fa-spin';
+            break;
+        default:
+            bgClass = 'bg-gradient-to-r from-blue-500 to-purple-500';
+            iconClass = 'text-blue-100';
+            icon = 'fas fa-info-circle';
+    }
+    
+    popup.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-2xl max-w-sm popup-enter border-2 border-white/20 backdrop-blur-sm`;
+    popup.innerHTML = `
+        <div class="flex items-center space-x-3">
+            <i class="${icon} ${iconClass} text-lg"></i>
+            <span class="font-medium text-sm">${message}</span>
+            <button onclick="removePopup(this.parentElement.parentElement)" class="ml-2 text-white/80 hover:text-white transition-colors">
+                <i class="fas fa-times text-sm"></i>
+            </button>
+        </div>
+    `;
+    
+    popupContainer.appendChild(popup);
+    
+    // Auto remove after duration (except for loading type)
+    if (type !== 'loading') {
+        setTimeout(() => {
+            removePopup(popup);
+        }, duration);
+    }
+    
+    return popup;
+}
+
+function removePopup(popup) {
+    if (popup && popup.parentElement) {
+        popup.classList.remove('popup-enter');
+        popup.classList.add('popup-exit');
+        setTimeout(() => {
+            if (popup.parentElement) {
+                popup.parentElement.removeChild(popup);
+            }
+        }, 300);
+    }
+}
+
+function removeAllPopups() {
+    const popupContainer = document.getElementById('popupContainer');
+    const popups = popupContainer.querySelectorAll('div');
+    popups.forEach(popup => removePopup(popup));
+}
+
+// DOM Elements
+const fileTab = document.getElementById('fileTab');
+const urlTab = document.getElementById('urlTab');
+const fileSection = document.getElementById('fileSection');
+const urlSection = document.getElementById('urlSection');
+const uploadArea = document.getElementById('uploadArea');
+const fileInput = document.getElementById('fileInput');
+const uploadContent = document.getElementById('uploadContent');
+const imagePreview = document.getElementById('imagePreview');
+const previewImage = document.getElementById('previewImage');
+const imageInfo = document.getElementById('imageInfo');
+
+const urlInput = document.getElementById('urlInput');
+const loadUrlBtn = document.getElementById('loadUrlBtn');
+const urlImagePreview = document.getElementById('urlImagePreview');
+const urlPreviewImage = document.getElementById('urlPreviewImage');
+const urlImageInfo = document.getElementById('urlImageInfo');
+const deleteImageBtn = document.getElementById('deleteImageBtn');
+const deleteUrlImageBtn = document.getElementById('deleteUrlImageBtn');
+
+const settingsPanel = document.getElementById('settingsPanel');
+const formatSelect = document.getElementById('formatSelect');
+const targetSize = document.getElementById('targetSize');
+const customSizeInput = document.getElementById('customSizeInput');
+const customSizeValue = document.getElementById('customSizeValue');
+const dimensionSelect = document.getElementById('dimensionSelect');
+const customDimensionInput = document.getElementById('customDimensionInput');
+const customWidth = document.getElementById('customWidth');
+const customHeight = document.getElementById('customHeight');
+const qualitySelect = document.getElementById('qualitySelect');
+const convertBtn = document.getElementById('convertBtn');
+
+const resultSection = document.getElementById('resultSection');
+const originalResult = document.getElementById('originalResult');
+const originalInfo = document.getElementById('originalInfo');
+const convertedCanvas = document.getElementById('convertedCanvas');
+const convertedInfo = document.getElementById('convertedInfo');
+const fileName = document.getElementById('fileName');
+const downloadBtn = document.getElementById('downloadBtn');
+const resetBtn = document.getElementById('resetBtn');
+
+// Guide toggle functionality
+const toggleGuide = document.getElementById('toggleGuide');
+const guideContent = document.getElementById('guideContent');
+
+toggleGuide.addEventListener('click', () => {
+    if (guideContent.classList.contains('hidden')) {
+        guideContent.classList.remove('hidden');
+        toggleGuide.innerHTML = '<i class="fas fa-chevron-up mr-1"></i>Hide Guide';
+        showPopup('Guide expanded! Check out the step-by-step instructions below.', 'info');
+    } else {
+        guideContent.classList.add('hidden');
+        toggleGuide.innerHTML = '<i class="fas fa-chevron-down mr-1"></i>Show Guide';
+    }
+});
+
+// Tab switching
+fileTab.addEventListener('click', () => switchTab('file'));
+urlTab.addEventListener('click', () => switchTab('url'));
+
+function switchTab(tab) {
+    if (tab === 'file') {
+        fileTab.classList.add('bg-blue-600', 'text-white');
+        fileTab.classList.remove('bg-gray-100');
+        urlTab.classList.remove('bg-blue-600', 'text-white');
+        urlTab.classList.add('bg-gray-100');
+        fileSection.classList.remove('hidden');
+        urlSection.classList.add('hidden');
+    } else {
+        urlTab.classList.add('bg-blue-600', 'text-white');
+        urlTab.classList.remove('bg-gray-100');
+        fileTab.classList.remove('bg-blue-600', 'text-white');
+        fileTab.classList.add('bg-gray-100');
+        urlSection.classList.remove('hidden');
+        fileSection.classList.add('hidden');
+    }
+}
+
+// File upload handlers
+uploadArea.addEventListener('click', (e) => {
+    // Only trigger file input if clicking on upload content area, not on image preview
+    if (!e.target.closest('#deleteImageBtn') && !e.target.closest('#imagePreview')) {
+        fileInput.click();
+    }
+});
+uploadArea.addEventListener('dragover', handleDragOver);
+uploadArea.addEventListener('dragleave', handleDragLeave);
+uploadArea.addEventListener('drop', handleDrop);
+fileInput.addEventListener('change', handleFileSelect);
+
+// Delete image handlers
+deleteImageBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    deleteCurrentImage();
+});
+
+deleteUrlImageBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    deleteCurrentUrlImage();
+});
+
+function handleDragOver(e) {
+    e.preventDefault();
+    uploadArea.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        handleFile(files[0]);
+    }
+}
+
+function handleFileSelect(e) {
+    if (e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+    }
+}
+
+function handleFile(file) {
+    if (!file.type.startsWith('image/')) {
+        showPopup('Please select a valid image file!', 'error');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        loadImageFromFile(e.target.result, file);
+    };
+    reader.readAsDataURL(file);
+}
+
+function loadImageFromFile(src, file) {
+    const img = new Image();
+    img.onload = () => {
+        currentImage = img;
+        previewImage.src = src;
+        
+        imageInfo.innerHTML = `
+            <div class="grid grid-cols-2 gap-2 text-left">
+                <div><strong>Name:</strong> ${file.name}</div>
+                <div><strong>Format:</strong> ${file.type.split('/')[1].toUpperCase()}</div>
+                <div><strong>Size:</strong> ${img.width} × ${img.height}</div>
+                <div><strong>File Size:</strong> ${formatFileSize(file.size)}</div>
+            </div>
+        `;
+        
+        uploadContent.classList.add('hidden');
+        imagePreview.classList.remove('hidden');
+        settingsPanel.classList.remove('hidden');
+        showPopup('Image loaded successfully!', 'success');
+    };
+    img.src = src;
+}
+
+function deleteCurrentImage() {
+    currentImage = null;
+    previewImage.src = '';
+    imageInfo.innerHTML = '';
+    uploadContent.classList.remove('hidden');
+    imagePreview.classList.add('hidden');
+    settingsPanel.classList.add('hidden');
+    resultSection.classList.add('hidden');
+    fileInput.value = '';
+}
+
+function deleteCurrentUrlImage() {
+    currentImage = null;
+    urlPreviewImage.src = '';
+    urlImageInfo.innerHTML = '';
+    urlImagePreview.classList.add('hidden');
+    settingsPanel.classList.add('hidden');
+    resultSection.classList.add('hidden');
+    urlInput.value = '';
+}
+
+// URL loading
+loadUrlBtn.addEventListener('click', loadFromUrl);
+urlInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        loadFromUrl();
+    }
+});
+
+async function loadFromUrl() {
+    const url = urlInput.value.trim();
+    if (!url) {
+        showPopup('Please enter a URL!', 'warning');
+        return;
+    }
+
+    // Basic URL validation
+    try {
+        new URL(url);
+    } catch (e) {
+        showPopup('Please enter a valid URL!', 'error');
+        return;
+    }
+
+    loadUrlBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Loading...';
+    loadUrlBtn.disabled = true;
+    
+    const loadingPopup = showPopup('Loading image from URL...', 'loading');
+
+    try {
+        // Method 1: Try direct image loading
+        await loadImageDirect(url);
+    } catch (error) {
+        try {
+            // Method 2: Try with proxy/cors bypass
+            await loadImageWithProxy(url);
+        } catch (error2) {
+            try {
+                // Method 3: Try fetch and convert to blob
+                await loadImageWithFetch(url);
+            } catch (error3) {
+                removePopup(loadingPopup);
+                showPopup('Failed to load image. Please try a different URL or upload the image instead.', 'error', 6000);
+                loadUrlBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Load Image';
+                loadUrlBtn.disabled = false;
+            }
+        }
+    }
+}
+
+function loadImageDirect(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        
+        img.onload = () => {
+            currentImage = img;
+            urlPreviewImage.src = url;
+            
+            // Get file extension from URL for format detection
+            let format = 'Unknown';
+            const urlPath = url.toLowerCase();
+            if (urlPath.includes('.jpg') || urlPath.includes('.jpeg')) format = 'JPEG';
+            else if (urlPath.includes('.png')) format = 'PNG';
+            else if (urlPath.includes('.webp')) format = 'WebP';
+            else if (urlPath.includes('.gif')) format = 'GIF';
+            else if (urlPath.includes('.bmp')) format = 'BMP';
+            
+            urlImageInfo.innerHTML = `
+                <div class="grid grid-cols-2 gap-2 text-left">
+                    <div><strong>Source:</strong> URL</div>
+                    <div><strong>Format:</strong> ${format}</div>
+                    <div><strong>Size:</strong> ${img.width} × ${img.height}</div>
+                    <div><strong>File Size:</strong> Unknown</div>
+                </div>
+            `;
+            
+            urlImagePreview.classList.remove('hidden');
+            settingsPanel.classList.remove('hidden');
+            
+            loadUrlBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Load Image';
+            loadUrlBtn.disabled = false;
+            showPopup('Image loaded from URL successfully!', 'success');
+            resolve();
+        };
+        
+        img.onerror = () => reject(new Error('Direct load failed'));
+        
+        img.crossOrigin = 'anonymous';
+        img.src = url;
+        
+        // Timeout after 5 seconds
+        setTimeout(() => reject(new Error('Timeout')), 5000);
+    });
+}
+
+function loadImageWithProxy(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        
+        img.onload = () => {
+            currentImage = img;
+            urlPreviewImage.src = img.src;
+            
+            let format = 'Unknown';
+            const urlPath = url.toLowerCase();
+            if (urlPath.includes('.jpg') || urlPath.includes('.jpeg')) format = 'JPEG';
+            else if (urlPath.includes('.png')) format = 'PNG';
+            else if (urlPath.includes('.webp')) format = 'WebP';
+            else if (urlPath.includes('.gif')) format = 'GIF';
+            else if (urlPath.includes('.bmp')) format = 'BMP';
+            
+            urlImageInfo.innerHTML = `
+                <div class="grid grid-cols-2 gap-2 text-left">
+                    <div><strong>Source:</strong> URL (Proxy)</div>
+                    <div><strong>Format:</strong> ${format}</div>
+                    <div><strong>Size:</strong> ${img.width} × ${img.height}</div>
+                    <div><strong>File Size:</strong> Unknown</div>
+                </div>
+            `;
+            
+            urlImagePreview.classList.remove('hidden');
+            settingsPanel.classList.remove('hidden');
+            
+            loadUrlBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Load Image';
+            loadUrlBtn.disabled = false;
+            showPopup('Image loaded from URL successfully!', 'success');
+            resolve();
+        };
+        
+        img.onerror = () => reject(new Error('Proxy load failed'));
+        
+        // Try without crossOrigin
+        img.src = url;
+        
+        setTimeout(() => reject(new Error('Proxy timeout')), 5000);
+    });
+}
+
+async function loadImageWithFetch(url) {
+    try {
+        const response = await fetch(url, { mode: 'no-cors' });
+        const blob = await response.blob();
+        const objectURL = URL.createObjectURL(blob);
+        
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            
+            img.onload = () => {
+                currentImage = img;
+                urlPreviewImage.src = objectURL;
+                
+                let format = 'Unknown';
+                const urlPath = url.toLowerCase();
+                if (urlPath.includes('.jpg') || urlPath.includes('.jpeg')) format = 'JPEG';
+                else if (urlPath.includes('.png')) format = 'PNG';
+                else if (urlPath.includes('.webp')) format = 'WebP';
+                else if (urlPath.includes('.gif')) format = 'GIF';
+                else if (urlPath.includes('.bmp')) format = 'BMP';
+                
+                urlImageInfo.innerHTML = `
+                    <div class="grid grid-cols-2 gap-2 text-left">
+                        <div><strong>Source:</strong> URL (Fetch)</div>
+                        <div><strong>Format:</strong> ${format}</div>
+                        <div><strong>Size:</strong> ${img.width} × ${img.height}</div>
+                        <div><strong>File Size:</strong> ${blob.size ? formatFileSize(blob.size) : 'Unknown'}</div>
+                    </div>
+                `;
+                
+                urlImagePreview.classList.remove('hidden');
+                settingsPanel.classList.remove('hidden');
+                
+                loadUrlBtn.innerHTML = '<i class="fas fa-download mr-2"></i>Load Image';
+                loadUrlBtn.disabled = false;
+                showPopup('Image loaded from URL successfully!', 'success');
+                resolve();
+            };
+            
+            img.onerror = () => {
+                URL.revokeObjectURL(objectURL);
+                reject(new Error('Fetch load failed'));
+            };
+            
+            img.src = objectURL;
+        });
+    } catch (error) {
+        throw new Error('Fetch failed');
+    }
+}
+
+// Custom input handlers
+targetSize.addEventListener('change', (e) => {
+    if (e.target.value === 'custom') {
+        customSizeInput.classList.remove('hidden');
+    } else {
+        customSizeInput.classList.add('hidden');
+    }
+});
+
+dimensionSelect.addEventListener('change', (e) => {
+    if (e.target.value === 'custom') {
+        customDimensionInput.classList.remove('hidden');
+        if (currentImage) {
+            customWidth.value = currentImage.width;
+            customHeight.value = currentImage.height;
+        }
+    } else {
+        customDimensionInput.classList.add('hidden');
+    }
+});
+
+// Convert functionality
+convertBtn.addEventListener('click', convertImage);
+
+function convertImage() {
+    const format = formatSelect.value;
+    if (!currentImage || !format) {
+        showPopup('Please select an image and format first!', 'warning');
+        return;
+    }
+
+    convertBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Converting...';
+    convertBtn.disabled = true;
+    
+    const convertingPopup = showPopup('Converting your image...', 'loading');
+
+    setTimeout(() => {
+        const canvas = convertedCanvas;
+        const ctx = canvas.getContext('2d');
+        
+        // Get dimensions
+        let width = currentImage.width;
+        let height = currentImage.height;
+        
+        const selectedDimension = dimensionSelect.value;
+        if (selectedDimension === 'custom') {
+            const customW = parseInt(customWidth.value);
+            const customH = parseInt(customHeight.value);
+            if (customW && customH) {
+                width = customW;
+                height = customH;
+            }
+        } else if (selectedDimension) {
+            const [w, h] = selectedDimension.split('x').map(Number);
+            width = w;
+            height = h;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw image
+        ctx.drawImage(currentImage, 0, 0, width, height);
+        
+        // Get quality and convert
+        let quality = parseInt(qualitySelect.value) / 100;
+        let mimeType = `image/${format}`;
+        if (format === 'jpeg') mimeType = 'image/jpeg';
+        
+        // Handle target file size
+        let targetSizeBytes = parseInt(targetSize.value);
+        if (targetSize.value === 'custom') {
+            const customSize = parseInt(customSizeValue.value);
+            if (customSize) {
+                targetSizeBytes = customSize * 1024; // Convert KB to bytes
+            }
+        }
+        if (targetSizeBytes) {
+            quality = adjustQualityForSize(canvas, mimeType, targetSizeBytes, quality);
+        }
+        
+        convertedDataURL = canvas.toDataURL(mimeType, quality);
+        
+        // Show results
+        showResults(format, width, height);
+        
+        removePopup(convertingPopup);
+        showPopup('Image converted successfully!', 'success');
+        
+        convertBtn.innerHTML = '<i class="fas fa-magic mr-2"></i>Convert Image';
+        convertBtn.disabled = false;
+    }, 500);
+}
+
+function adjustQualityForSize(canvas, mimeType, targetSize, initialQuality) {
+    let quality = initialQuality;
+    let dataURL = canvas.toDataURL(mimeType, quality);
+    let currentSize = (dataURL.split(',')[1].length * 3) / 4;
+    
+    let minQuality = 0.1;
+    let maxQuality = initialQuality;
+    
+    for (let i = 0; i < 10 && Math.abs(currentSize - targetSize) > targetSize * 0.1; i++) {
+        if (currentSize > targetSize) {
+            maxQuality = quality;
+            quality = (minQuality + quality) / 2;
+        } else {
+            minQuality = quality;
+            quality = (quality + maxQuality) / 2;
+        }
+        
+        dataURL = canvas.toDataURL(mimeType, quality);
+        currentSize = (dataURL.split(',')[1].length * 3) / 4;
+    }
+    
+    return quality;
+}
+
+function showResults(format, width, height) {
+    // Show original
+    originalResult.src = fileSection.classList.contains('hidden') ? urlPreviewImage.src : previewImage.src;
+    originalInfo.innerHTML = `
+        <div><strong>Size:</strong> ${currentImage.width} × ${currentImage.height}</div>
+        <div><strong>Format:</strong> Original</div>
+    `;
+    
+    // Show converted info
+    const base64Length = convertedDataURL.split(',')[1].length;
+    const estimatedSize = (base64Length * 3) / 4;
+    
+    convertedInfo.innerHTML = `
+        <div><strong>Size:</strong> ${width} × ${height}</div>
+        <div><strong>Format:</strong> ${format.toUpperCase()}</div>
+        <div><strong>File Size:</strong> ${formatFileSize(estimatedSize)}</div>
+        <div><strong>Quality:</strong> ${qualitySelect.value}%</div>
+    `;
+    
+    fileName.value = `converted_image.${format}`;
+    resultSection.classList.remove('hidden');
+}
+
+// Download functionality
+downloadBtn.addEventListener('click', () => {
+    const link = document.createElement('a');
+    link.download = fileName.value || `converted_image.${formatSelect.value}`;
+    link.href = convertedDataURL;
+    link.click();
+    showPopup('Image downloaded successfully!', 'success');
+});
+
+// Reset functionality
+resetBtn.addEventListener('click', () => {
+    location.reload();
+});
+
+// Utility function
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+</script>
